@@ -10,9 +10,15 @@ class SeedAllTables extends Seeder
     {
         if(Locale::count() === 0) {
             Locale::create([
+                'code' => 'fa',
+                'name' => 'فارسی',
+                'is_default' => true,
+                'is_enabled' => true
+            ]);
+            Locale::create([
                 'code' => 'en',
                 'name' => 'English',
-                'is_default' => true,
+                'is_default' => false,
                 'is_enabled' => true
             ]);
         }
