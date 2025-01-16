@@ -2,3 +2,10 @@
 composer.lock
 .DS_Store
 .phpunit.result.cache
+/.idea
+*.log
+*.css.map
+.idea
+.vscode
+.env
+
