@@ -43,7 +43,10 @@ class Translator
     public function init()
     {
         $this->defaultLocale = $this->isConfigured() ? array_get(Locale::getDefault(), 'code', 'en') : 'en';
-        $this->activeLocale = $this->defaultLocale;
+        $this->activeLocale = Request::header("Language", $this->defaultLocale);
+        if($this->isConfigured() && !Locale::isValid($this->activeLocale)){
+            $this->activeLocale = $this->defaultLocale;
+        }
     }
 
     /**
