@@ -135,6 +135,49 @@ class TranslatableModel extends TranslatableBehavior
 
         return $query;
     }
+    
+    /**
+     * scopeTransSearch
+     * @param  Builder $query
+     * @param  string|array $fields
+     * @param  string $key
+     * @param  array $options
+     * @return Builder
+     */
+    public function scopeTransSearch($query, $fields, $key, $options = [])
+    {
+        if(is_string($fields)){
+            $fields = [$fields];
+        }
+        
+        extract(array_merge([
+            'locale' => null
+        ], $options));
+        
+        if (!$locale) {
+            $locale = $this->translatableContext;
+        }
+        
+        // Separate query into two separate queries for improved performance
+        $translateIndexes = Db::table('rainlab_translate_indexes')
+            ->where('rainlab_translate_indexes.model_type', '=', $this->getClass())
+            ->where('rainlab_translate_indexes.locale', '=', $locale)
+            ->whereIn('rainlab_translate_indexes.item', $fields)
+            ->where('rainlab_translate_indexes.value', "like", "%$key%")
+            ->pluck('model_id');
+        
+        $query->where(function($search_query) use($translateIndexes, $fields, $key){
+            if ($translateIndexes->count()){
+                $search_query->whereIn($this->model->getQualifiedKeyName(), $translateIndexes);
+            }
+            
+            foreach($fields as $field){
+                $search_query->orWhere($field, "like", "%$key%");
+            }
+        });
+        
+        return $query;
+    }
 
     /**
      * Applies a sort operation with a translatable index to a basic query. This scope will join the index table.

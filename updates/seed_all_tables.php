@@ -19,7 +19,7 @@ class SeedAllTables extends Seeder
                 'code' => 'en',
                 'name' => 'English',
                 'is_default' => false,
-                'is_enabled' => true
+                'is_enabled' => false
             ]);
         }
     }
